@@ -4,6 +4,8 @@
 # Author:           Lukas Nevrkla
 ##################################
 
+import math
+
 # Used indexing of utility space:
 #  1      2      3      4      5
 #  6      7      8      9     10
@@ -64,6 +66,15 @@ def calcUtility(curr, next):
     return (1 - Alpha) * curr['utility'] + \
         Alpha * (next['reward'] + Gamma * next['utility'])
 
+def my_round(n, ndigits):
+    part = n * 10 ** ndigits
+    delta = part - int(part)
+    # always round "away from 0"
+    if delta >= 0.5 or -0.5 < delta <= 0:
+        part = math.ceil(part)
+    else:
+        part = math.floor(part)
+    return part / (10 ** ndigits) if ndigits >= 0 else part * 10 ** abs(ndigits)
 
 if __name__ == '__main__':
     utilities = Utilities.strip()
@@ -77,7 +88,7 @@ if __name__ == '__main__':
         utilities[val]['utility'] = calcUtility(curr, next)
 
     utilities = [(format(i['raw'], '>7') if i['isReward'] 
-        else '{:7.3f}'.format(round(i['utility'], 3)))
+        else '{:7.3f}'.format(my_round(i['utility'], 3)))
         for i in utilities]
 
     printUtilities(utilities, lineCnt)
